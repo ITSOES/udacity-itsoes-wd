@@ -1,0 +1,29 @@
+application: udacity-itsoes-wd
+version: 3
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /
+  script: main.app
+
+- url: /Unit2/.*
+  script: unit2.app
+
+- url: /Unit3/.*
+  script: unit3.app
+
+- url: /Unit4/.*
+  script: unit4.app
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: jinja2
+  version: latest

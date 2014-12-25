@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if visits < 30 %}
+You've been here {{ visits }} times!
+    {% else %}
+    You are the best evar!!
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for post in posts %}
+        <h2> <a href="/Unit3/Blog/{{ post.key().id() }}"> {{ post.subject }}</a></h2>
+        <div class="content">{{ post.content | safe }}</div>
+
+        <hr>
+    {% endfor %}
+{% endblock %}

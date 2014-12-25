@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Base Template!</title>
+</head>
+
+<style type="text/css">
+    body {
+        margin: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        color: white;
+    }
+    table {
+        align-items: center;
+    }
+
+    .error {
+        color: red;
+    }
+
+    tr.error {
+        width: 150px;
+    }
+
+    a {
+        padding: 2px;
+        color: green;
+    }
+
+    textarea {
+        width: 400px;
+        height: 200px;
+        font-size: 17px;
+        font-family: "Helvetica Neue";
+    }
+
+    input[type=submit] {
+        font-size: 24px;
+    }
+
+    hr {
+        margin: 20px;
+    }
+
+    .content {
+        white-space: pre-line;
+    }
+</style>
+
+<body>
+    <h1 style="background-color: blue; font: Helvetica"> Welcome to the site</h1>
+    <div style="margin-bottom: 10px">
+        <a href="/">Home</a>
+        <a href="/Unit2/ShoppingList">Shopping List</a>
+        <a href="/Unit2/FizzBuzz">FizzBuzz</a>
+        <a href="/Unit3/Blog">Blog</a>
+        <a href="/Unit3/Blog/newpost">New Post</a>
+        <a href="/Unit4/Visits">Visits</a>
+        <a href="/Unit4/SignUp">Sign Up</a>
+    </div>
+    <hr>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>
