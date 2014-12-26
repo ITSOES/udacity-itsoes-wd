@@ -1,5 +1,5 @@
 import webapp2
-from handler import Handler, GoHome
+from handler import Handler, GoHome, Sitemodel
 from google.appengine.ext import db
 
 class Blog(Handler):
@@ -20,11 +20,11 @@ class Blog(Handler):
         pass
         self.render_front()
 
-class Posts(db.Model):
+class Posts(Sitemodel):
 
     subject = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
-    created = db.DateTimeProperty(auto_now_add=True)
+    # created = db.DateTimeProperty(auto_now_add=True)
 
 class Post(Blog):
     def get(self, post_id):

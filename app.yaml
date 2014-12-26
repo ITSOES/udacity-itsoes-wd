@@ -10,7 +10,7 @@ handlers:
   upload: favicon\.ico
 
 - url: /
-  script: main.app
+  script: handler.app
 
 - url: /Unit2/.*
   script: unit2.app
@@ -22,7 +22,7 @@ handlers:
   script: unit4.app
 
 - url: .*
-  script: main.app
+  script: handler.app
 
 libraries:
 - name: jinja2
