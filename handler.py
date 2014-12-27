@@ -53,11 +53,18 @@ def check_secure_val(sHASH):
     return sHASH == make_secure(s) and s
 
 class Handler(webapp2.RequestHandler):
-    def write(self, *a, **kw):
-        self.response.out.write(*a, **kw)
+    def initialize(self, *a, **kw):
+        # print(Sitemodel.by_id(4))
+        # print(testClass.by_id(4))
+        super(Handler, self).initialize(*a, **kw)
+        uid = self.readcookie('user_id')
+        self.user = uid and Sitemodel.by_id(uid)
 
     def renderjinja(self, template, **kw):
         self.write(self.render_str(template, **kw))
+
+    def write(self, *a, **kw):
+        self.response.out.write(*a, **kw)
 
     def render_str(self, template, **params):
         t = jinja_env.get_template(template)
@@ -74,6 +81,9 @@ class Handler(webapp2.RequestHandler):
             except: return 0
         return result
 
+    def hash_password(self, string):
+        return hasher(string)
+
 
 
 class Homepage(Handler):
@@ -84,13 +94,9 @@ class GoHome(Handler):
     def get(self):
         self.redirect("/")
 
-# class Sitedb(db):
 class Sitemodel(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     lastmodified = db.DateTimeProperty(auto_now=True)
-
-    # class Sitedb(db):
-    #     pass
 
     def addEmail(self):
         pass
@@ -98,11 +104,22 @@ class Sitemodel(db.Model):
     @classmethod
     def by_id(cls, uid):
         user = cls.get_by_id(uid)
+        return user
+
+    @classmethod
+    def by_key(cls, **key):
+        pass
+        print('KEY', key)
+        for key, value in key.items():
+            u = cls.all().filter(key+' =', value).get()
+            return u
+
 
     @classmethod
     def register(cls, name, password, email=None):
         p = make_secure(password)
         return cls(name=name, password_hash=p, email=email)
+
 
 app = webapp2.WSGIApplication([ ('/', Homepage),
                                 ('.*', GoHome)  # Redirects any junk url home

@@ -24,6 +24,7 @@ def invalid_username(un):
         return 'That\'s not a valid username!'
     if Member.by_key(name=un):
         return 'That username already exists!'
+    return ''
 
 class Member(Sitemodel):
     name = db.StringProperty(required=True)
@@ -51,10 +52,10 @@ class SignUp(Handler):
         self.renderSign()
 
     def post(self):
-        username = self.name = self.request.get('username')
-        password = self.password = self.request.get('password')
-        verify = self.verify = self.request.get('verify')
-        email = self.email = self.request.get('email')
+        username = self.request.get('username')
+        password = self.request.get('password')
+        verify = self.request.get('verify')
+        email = self.request.get('email')
 
         if not invalid_username(username) and password and password == verify and valid_email(email):
             email = ''
@@ -64,8 +65,7 @@ class SignUp(Handler):
 
         params = dict(username=username,
                       email=email)
-        if invalid_username(username):
-            params['invalidusername'] = invalid_username(username)
+        params['invalidusername'] = invalid_username(username)
         if not password:
             params['invalidpassword'] = 'Password can\'t be empty!'
         if not valid_email(email):
@@ -84,7 +84,15 @@ class Login(SignUp):
         self.renderSign('login.html')
 
     def post(self):
-        pass
+        username = self.request.get('username')
+        password = self.request.get('password')
+        u = Member.by_key(name=username)
+        if u and self.hash_password(password) == u.password_hash:
+            self.setcookie('user', username)
+            self.redirect('/Unit4/welcome')
+        params = dict(name=username, invalidusername='Invalid user or password')
+        self.renderSign('login.html', **params)
+
 
 class Welcome(SignUp):
     def get(self):
