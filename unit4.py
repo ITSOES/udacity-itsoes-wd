@@ -1,55 +1,57 @@
-import webapp2, re
+import webapp2
+import re
 
 from handler import Handler, GoHome, Sitemodel
 from google.appengine.ext import db
-# import random, string
 SECRET = 'whatev'
 
 
 class Visits(Handler):
-    def get(self, template='visits.html'):
+    template = 'visits.html'
+    def get(self):
         visits = self.readcookie('visits', default=0, numbered=True) + 1
         self.setcookie('visits', visits)
-        self.renderjinja('visits.html', visits=visits)
+        self.renderjinja(visits=visits)
 
 
 EMAIL_RE = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
+
+
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
-USERNAME_RE = re.compile(r'^[a-zA-Z0-9_-]{3,20}$')
-def invalid_username(un):
 
+USERNAME_RE = re.compile(r'^[a-zA-Z0-9_-]{3,20}$')
+
+
+def invalid_username(un):
     if not (un or USERNAME_RE.match(un)):
         return 'That\'s not a valid username!'
     if Member.by_key(name=un):
         return 'That username already exists!'
     return ''
 
+
 class Member(Sitemodel):
     name = db.StringProperty(required=True)
     password_hash = db.StringProperty(required=True)
     email = db.StringProperty(required=False)
-    # def testprint(self):
-    #     self.by_id('hello')
 
-
-#
-# @classmethod
-# def by_id(cls, uid):
-#         user = Member.get_by_id(uid)
-#
-#     @classmethod
-#     def register(cls, name, password, email=None):
-#         p = make_secure(password)
-#         return cls(name=name, password_hash=p, email=email)
 
 class SignUp(Handler):
-    def renderSign(self, template='signupsecure.html', **params):
-        self.renderjinja(template, **params)
+    template = 'signupsecure.html'
 
-    def get(self):
-        self.renderSign()
+    def initialize(self, *a, **kw):
+        # I'm aware that the following code does not check the Google
+        # datastore for the user
+        super(Handler, self).initialize(*a, **kw)
+        self.user = self.readcookie('user')
+
+    # def renderSign(self, **params):
+    #     self.renderjinja(**params)
+
+    # def get(self):
+    #     self.renderSign()
 
     def post(self):
         username = self.request.get('username')
@@ -62,6 +64,7 @@ class SignUp(Handler):
             self.setcookie('user', username)
             self.saveUser(username, password, email)
             self.redirect('/Unit4/welcome/')
+            return
 
         params = dict(username=username,
                       email=email)
@@ -72,16 +75,16 @@ class SignUp(Handler):
             params['invalidemail'] = "This email is not a valid email."
         if password != verify:
             params['invalidverify'] = 'Password must match!'
-        self.renderSign(**params)
+        self.renderjinja(**params)
 
     def saveUser(self, name, password, email=''):
         password_hash = self.hash_password(password)
         User = Member(name=name, password_hash=password_hash, email=email)
         User.put()
 
+
 class Login(SignUp):
-    def get(self):
-        self.renderSign('login.html')
+    template = 'login.html'
 
     def post(self):
         username = self.request.get('username')
@@ -90,22 +93,30 @@ class Login(SignUp):
         if u and self.hash_password(password) == u.password_hash:
             self.setcookie('user', username)
             self.redirect('/Unit4/welcome')
-        params = dict(name=username, invalidusername='Invalid user or password')
-        self.renderSign('login.html', **params)
+            return
+        params = dict(username=username, invalidusername='Invalid user or password')
+        self.renderjinja(**params)
+
+
+class Logout(SignUp):
+    def get(self):
+        self.setcookie('user', '')
+        self.redirect('/Unit4/signup')
 
 
 class Welcome(SignUp):
+    template = 'welcome.html'
     def get(self):
-        user = self.readcookie('user')
-        if not user:
+        if not self.user:
             self.redirect('/Unit4/signup/')
-        self.renderSign('welcome.html', name=user)
+        self.renderjinja(name=self.user)
 
 
-app = webapp2.WSGIApplication([('/Unit4/Visits/?', Visits),
-                               ('/Unit4/signup/?', SignUp),
-                               ('/Unit4/welcome/?', Welcome),
-                               ('/Unit4/?', SignUp),
-                               ('/Unit4/login/?', Login),
+app = webapp2.WSGIApplication([('/Unit[1-5]/Visits/?', Visits),
+                               ('/Unit[1-5]/signup/?', SignUp),
+                               ('/Unit[1-5]/welcome/?', Welcome),
+                               ('/Unit[1-5]/?', SignUp),
+                               ('/Unit[1-5]/login/?', Login),
+                               ('/Unit[1-5]/logout/?', Logout),
                                ('.*', GoHome)  # Any junk urls goes to the homepage
                               ], debug=True)
