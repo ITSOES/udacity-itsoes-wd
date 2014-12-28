@@ -1,5 +1,5 @@
 application: udacity-itsoes-wd
-version: 4
+version: 5
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -21,7 +21,7 @@ handlers:
 - url: /Unit4/.*
   script: unit4.app
 
-- url: /Unit5/.*
+- url: /Unit5/.*|/Unit5
   script: unit5.app
 
 - url: .*

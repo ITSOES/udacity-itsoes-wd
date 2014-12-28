@@ -63,7 +63,7 @@ class SignUp(Handler):
             email = ''
             self.setcookie('user', username)
             self.saveUser(username, password, email)
-            self.redirect('/Unit4/welcome/')
+            self.redirect('/Unit5/welcome/')
             return
 
         params = dict(username=username,
@@ -92,7 +92,7 @@ class Login(SignUp):
         u = Member.by_key(name=username)
         if u and self.hash_password(password) == u.password_hash:
             self.setcookie('user', username)
-            self.redirect('/Unit4/welcome')
+            self.redirect('/Unit5/welcome')
             return
         params = dict(username=username, invalidusername='Invalid user or password')
         self.renderjinja(**params)
@@ -101,22 +101,22 @@ class Login(SignUp):
 class Logout(SignUp):
     def get(self):
         self.setcookie('user', '')
-        self.redirect('/Unit4/signup')
+        self.redirect('/Unit5/signup')
 
 
 class Welcome(SignUp):
     template = 'welcome.html'
     def get(self):
         if not self.user:
-            self.redirect('/Unit4/signup/')
+            self.redirect('/Unit5/signup/')
         self.renderjinja(name=self.user)
 
 
-app = webapp2.WSGIApplication([('/Unit[1-5]/Visits/?', Visits),
-                               ('/Unit[1-5]/signup/?', SignUp),
-                               ('/Unit[1-5]/welcome/?', Welcome),
-                               ('/Unit[1-5]/?', SignUp),
-                               ('/Unit[1-5]/login/?', Login),
-                               ('/Unit[1-5]/logout/?', Logout),
+app = webapp2.WSGIApplication([('/Unit4/Visits/?', Visits),
+                               ('/Unit4/signup/?', SignUp),
+                               ('/Unit4/welcome/?', Welcome),
+                               ('/Unit4/?', SignUp),
+                               ('/Unit4/login/?', Login),
+                               ('/Unit4/logout/?', Logout),
                                ('.*', GoHome)  # Any junk urls goes to the homepage
                               ], debug=True)

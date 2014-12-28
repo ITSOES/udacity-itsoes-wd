@@ -9,7 +9,7 @@ from google.appengine.ext import db
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-folders = ['', 'Unit2', 'Unit3', 'Unit4']
+folders = ['', 'Unit2', 'Unit3', 'Unit4', 'Unit5']
 paths = [os.path.join(template_dir, x) for x in folders]
 loader = jinja2.FileSystemLoader(paths)
 jinja_env = jinja2.Environment(loader=loader, autoescape=True)

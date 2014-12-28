@@ -1,0 +1,5 @@
+[
+  {% for post in posts %}
+{"content": {{ post.content|jsonify }}, "subject": {{ post.subject|jsonify }}}
+  {% endfor %}
+  ]
