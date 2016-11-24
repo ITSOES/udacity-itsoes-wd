@@ -104,6 +104,7 @@ class Logout(SignUp):
         self.redirect('/Unit5/signup')
 
 
+
 class Welcome(SignUp):
     template = 'welcome.html'
     def get(self):

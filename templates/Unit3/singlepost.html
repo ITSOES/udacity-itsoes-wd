@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+        <h3>Queried {{ last_queried() }} seconds ago.</h3>
 
         <h2>{{ subject }}</h2>
         <div class="content">{{ content | safe }}</div>

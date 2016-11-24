@@ -5,7 +5,7 @@ from xml.dom import minidom
 
 from handler import Handler, GoHome
 from unit4 import SignUp, Login, Logout, Welcome
-from unit3 import Blog, NewPost, Post, Posts
+from unit3 import Blog, NewPost, Post, Posts, Flush
 # from google.appengine.ext import db
 
 
@@ -42,6 +42,7 @@ app = webapp2.WSGIApplication([ ('/Unit5/?/?', Blog),
                                 ('/Unit5//?login/?/?', Login),
                                 ('/Unit5//?logout/?/?', Logout),
                                 ('/Unit5//?welcome/?/?', Welcome),
+                                ('/Unit5//?flush/?/?', Flush),
                                 ('.*', GoHome)  # Any junk urls goes to the homepage
                               ], debug=True)
 

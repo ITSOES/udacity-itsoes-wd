@@ -1,6 +1,6 @@
 import os
 import hmac
-import random
+import random, logging
 from string import letters
 
 import webapp2
@@ -17,8 +17,10 @@ del paths, loader, folders, template_dir  # Deletes the helper variables after u
 
 SECRET = 'whatev'
 
+
 def make_salt(length=5):
     return ''.join(random.choice(letters) for x in xrange(length))
+
 
 def hasher(s, salt='', saltit=None):
     if not (salt and saltit) or saltit == False:
@@ -26,23 +28,26 @@ def hasher(s, salt='', saltit=None):
     salt = salt or make_salt()
     return hasher(s + salt)
 
+
 def make_secure(s, salt='', saltit=None):
     # if not (salt and saltit) or saltit == False:
-    #     return hmac.new(SECRET, str(s)).hexdigest()
+    # return hmac.new(SECRET, str(s)).hexdigest()
     # salt = salt or make_salt()
     return '%s|%s' % (str(s), hasher(s)) if s else ''
+
 
 def check_secure_val(sHASH):
     s = sHASH.split('|')[0] if sHASH else ''
     return sHASH == make_secure(s) and s
 
+
 class Handler(webapp2.RequestHandler):
-    template='Homepage.html'
+    template = 'Homepage.html'
     initial_values = {}
 
     # def initialize(self, *a, **kw):
-    #     super(Handler, self).initialize(*a, **kw)
-    #     uid = str(self.readcookie('user'))
+    # super(Handler, self).initialize(*a, **kw)
+    # uid = str(self.readcookie('user'))
     #     print(uid, 'HIHIHIPOP')
     #     self.user = uid and Sitemodel.by_key(name=uid)
     #     print(self.user)
@@ -68,8 +73,10 @@ class Handler(webapp2.RequestHandler):
     def readcookie(self, name, default='', numbered=False):
         result = check_secure_val(self.request.cookies.get(str(name))) or default
         if numbered:
-            try: return int(result)
-            except: return 0
+            try:
+                return int(result)
+            except:
+                return 0
         return result
 
     def hash_password(self, string):
@@ -80,19 +87,25 @@ class GoHome(Handler):
     def get(self):
         self.redirect("/")
 
+
 class Sitemodel(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     lastmodified = db.DateTimeProperty(auto_now=True)
 
     @classmethod
     def by_id(cls, uid):
+        logging.debug('DATABASE BY ID')
+        print('pDATABASE BY ID')
         user = cls.get_by_id(uid)
         return user
 
     @classmethod
     def by_key(cls, **key):
+
         for key, value in key.items():
-            u = cls.all().filter(key+' =', value).get()
+            logging.debug('DATABASE BY KEY')
+            print('pDATABASE BY KEY')
+            u = cls.all().filter(key + ' =', value).get()
             return u
 
 
@@ -102,6 +115,6 @@ class Sitemodel(db.Model):
         return cls(name=name, password_hash=p, email=email)
 
 
-app = webapp2.WSGIApplication([ ('/', Handler),
-                                ('.*', GoHome)  # Redirects any junk url home
+app = webapp2.WSGIApplication([('/', Handler),
+                               ('.*', GoHome)  # Redirects any junk url home
                               ], debug=True)

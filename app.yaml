@@ -24,6 +24,12 @@ handlers:
 - url: /Unit5/.*|/Unit5
   script: unit5.app
 
+- url: /Unit6/.*|/Unit6
+  script: unit6.app
+
+#- url: /extendedblog/.*|/extendedblog
+#  script: hw5/blog.app
+
 - url: .*
   script: handler.app
 
